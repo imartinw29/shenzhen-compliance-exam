@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>选咖啡喝法</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #1a1a2e; color: #eee; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.card {
+  background: #16213e; border-radius: 20px; padding: 32px; max-width: 480px; width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.step { display: none; }
+.step.active { display: block; }
+.progress { display: flex; gap: 6px; margin-bottom: 24px; }
+.progress-dot {
+  flex: 1; height: 4px; border-radius: 2px; background: #333; transition: background 0.3s;
+}
+.progress-dot.done { background: #e2b04a; }
+.progress-dot.current { background: #e2b04a; }
+h2 { font-size: 20px; margin-bottom: 6px; color: #e2b04a; }
+.subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+.options { display: flex; flex-direction: column; gap: 12px; }
+.opt-btn {
+  background: #1a1a2e; border: 2px solid #333; border-radius: 12px;
+  padding: 16px; text-align: left; cursor: pointer; transition: all 0.2s;
+}
+.opt-btn:hover { border-color: #e2b04a; background: #1e2a4a; }
+.opt-btn .label { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.opt-btn .desc { font-size: 12px; color: #888; }
+.result-box { text-align: center; }
+.result-box .emoji { font-size: 64px; margin-bottom: 16px; }
+.result-box h3 { font-size: 22px; color: #e2b04a; margin-bottom: 12px; }
+.result-box .method { font-size: 15px; color: #ccc; line-height: 1.8; text-align: left; background: #1a1a2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.result-box .method li { margin-bottom: 8px; }
+.result-box .rec { background: #0f3460; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.result-box .rec-title { font-size: 14px; color: #e2b04a; margin-bottom: 8px; }
+.result-box .rec-content { font-size: 15px; color: #ddd; }
+.restart { color: #888; font-size: 13px; cursor: pointer; text-decoration: underline; background: none; border: none; width: 100%; padding: 8px; }
+.restart:hover { color: #e2b04a; }
+</style>
+</head>
+<body>
+<div class="card">
+
+<!-- Step 0: Intro -->
+<div class="step active" id="step-0">
+  <div style="text-align:center;font-size:64px;margin-bottom:16px;">☕</div>
+  <h2 style="text-align:center;">选咖啡喝法</h2>
+  <p class="subtitle" style="text-align:center;">6步帮你找到最适合自己的方式</p>
+  <div class="result-box">
+    <button class="opt-btn" style="text-align:center;border-color:#e2b04a;" onclick="goStep(1)">
+      <span class="label">开始选择</span>
+    </button>
+  </div>
+</div>
+
+<!-- Step 1: 方便 vs 品质 -->
+<div class="step" id="step-1">
+  <div class="progress"><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第1步</h2>
+  <p class="subtitle">你喝咖啡，最在意的是什么？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="goStep(2, 'A')">
+      <div class="label">☕ 就图方便，快</div>
+      <div class="desc">早上来不及，最好30秒搞定一杯</div>
+    </div>
+    <div class="opt-btn" onclick="goStep(2, 'B')">
+      <div class="label">🎯 还想喝好点</div>
+      <div class="desc">愿意花点时间换更好的味道</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2A: 速溶派 -->
+<div class="step" id="step-2a">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第2步（方便派）</h2>
+  <p class="subtitle">你已经选了方便，那想喝到什么程度？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="goStep(3a, 'a')">
+      <div class="label">凑合喝就行</div>
+      <div class="desc">有个咖啡味就够，便宜最重要</div>
+    </div>
+    <div class="opt-btn" onclick="goStep(3b, 'b')">
+      <div class="label">好点的速溶</div>
+      <div class="desc">想比三合一好喝，但不想买器具</div>
+    </div>
+    <div class="opt-btn" onclick="goStep(3c, 'c')">
+      <div class="label">稍微麻烦点也行</div>
+      <div class="desc">可以接受几分钟，换更大提升</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2B: 品质派 -->
+<div class="step" id="step-2b">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第2步（品质派）</h2>
+  <p class="subtitle">你愿意投入多少精力？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="goStep(3d, 'a')">
+      <div class="label">想买器具，但懒得动手</div>
+      <div class="desc">机器自动搞定，人坐着等</div>
+    </div>
+    <div class="opt-btn" onclick="goStep(3d, 'b')">
+      <div class="label">愿意学，享受过程</div>
+      <div class="desc">手冲、法压都可以，享受仪式感</div>
+    </div>
+    <div class="opt-btn" onclick="goStep(3e, 'a')">
+      <div class="label">从豆子开始折腾</div>
+      <div class="desc">买生豆自己烘，或者买咖啡豆自己磨</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3a: 便宜速溶 -->
+<div class="step" id="step-3a">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第3步</h2>
+  <p class="subtitle">要不要加点奶？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="showResult('black')">
+      <div class="label">就喝黑的</div>
+      <div class="desc">直接冲水，不加别的</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('milky')">
+      <div class="label">要加奶</div>
+      <div class="desc">牛奶、奶精都行</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3b: 好速溶 -->
+<div class="step" id="step-3b">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第3步</h2>
+  <p class="subtitle">预算大概多少？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="showResult('freeze')">
+      <div class="label">¥50以内</div>
+      <div class="desc">日常口粮，不追求极致</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('freeze_pro')">
+      <div class="label">¥50-150</div>
+      <div class="desc">想喝点真正好喝的</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3c: 稍微麻烦 -->
+<div class="step" id="step-3c">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第3步</h2>
+  <p class="subtitle">能接受几分钟出杯？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="showResult('pod')">
+      <div class="label">30秒</div>
+      <div class="desc">按下按钮，一杯出来</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('drip')">
+      <div class="label">3-5分钟</div>
+      <div class="desc">愿意等着，想要更好味道</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('french')">
+      <div class="label">5-8分钟</div>
+      <div class="desc">不介意多几步，但也不想太复杂</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3d: 品质派-买器具 -->
+<div class="step" id="step-3d">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第3步</h2>
+  <p class="subtitle">预算多少？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="showResult('moka')">
+      <div class="label">¥100-300</div>
+      <div class="desc">性价比首选</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('french_low')">
+      <div class="label">¥100以内</div>
+      <div class="desc">极简入门</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('hand_grind')">
+      <div class="label">¥300-800</div>
+      <div class="desc">愿意为好磨豆投资</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('semi_auto')">
+      <div class="label">¥1000以上</div>
+      <div class="desc">认真玩咖啡了</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3e: 从豆子开始 -->
+<div class="step" id="step-3e">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+  <h2>第3步</h2>
+  <p class="subtitle">想喝什么风格？</p>
+  <div class="options">
+    <div class="opt-btn" onclick="showResult('clean')">
+      <div class="label">干净清爽</div>
+      <div class="desc">突出咖啡本身的风味</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('rich')">
+      <div class="label">浓郁厚重</div>
+      <div class="desc">喜欢强烈的咖啡存在感</div>
+    </div>
+    <div class="opt-btn" onclick="showResult('versatile')">
+      <div class="label">啥都能做</div>
+      <div class="desc">有时黑咖有时加奶</div>
+    </div>
+  </div>
+</div>
+
+<!-- Result -->
+<div class="step" id="result-step">
+  <div class="progress"><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot done"></div><div class="progress-dot done"></div></div>
+  <div class="result-box" id="result-content"></div>
+</div>
+
+</div>
+<script>
+var path = [];
+function goStep(n, choice) {
+  path.push(choice);
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  var el = document.getElementById('step-' + n);
+  if (el) el.classList.add('active');
+  else showResult(n);
+}
+var results = {
+  black: {
+    emoji: '🫘',
+    title: '老式速溶黑咖啡',
+    method: [
+      '直接买<strong>纯速溶黑咖啡粉</strong>（配料表只有咖啡），不是三合一。',
+      '开水冲泡，想浓想淡自己调，一杯成本不到 ¥0.5。',
+      '品牌推荐：<strong>AGF Maxim蓝瓶</strong>、<strong>隅田川</strong>黑咖啡粉。',
+      '健康方面：黑咖啡对肝脏、心血管的好处最明确，不加糖不加奶最好。'
+    ],
+    rec: '这是最省心的入门选择，先养成喝咖啡的习惯，之后再慢慢升级。'
+  },
+  milky: {
+    emoji: '🥛',
+    title: '速溶拿铁 / 三合一改良版',
+    method: [
+      '普通速溶咖啡粉 + <strong>纯牛奶</strong>，自己打奶泡或直接用牛奶冲。',
+      '比三合一好太多——三合一是植脂末+糖+咖啡，热量高且没营养。',
+      '自制拿铁公式：<strong>速溶咖啡粉2g + 热牛奶200ml</strong>，搅拌均匀即可。',
+      '进阶：买一瓶<strong>AGF蓝瓶浓缩液</strong>，直接倒牛奶里，零失败。'
+    ],
+    rec: '速溶+牛奶比三合一健康得多，也更好喝，强烈推荐这个组合。'
+  },
+  freeze: {
+    emoji: '❄️',
+    title: '冻干速溶咖啡',
+    method: [
+      '<strong>冻干技术</strong>比传统热烘速溶保留更多风味，接近现煮口感。',
+      '冷水也能冲（冰美式），热水冲就是热美式，非常方便。',
+      '品牌推荐：<strong>三顿半数字系列</strong>、<strong>永璞</strong>冻干、<strong>Starbucks VIA</strong>。',
+      '预算充足可以买<strong>Nescafé Gold</strong>（雀巢金牌冻干），性价比高。'
+    ],
+    rec: '冻干速溶是"方便"和"好喝"之间最好的平衡，适合大多数日常饮用。'
+  },
+  freeze_pro: {
+    emoji: '✨',
+    title: '精品冻干 / 冷萃浓缩液',
+    method: [
+      '<strong>精品冻干</strong>：三顿半1-6号（按烘焙度选）、Seesnow闪萃。',
+      '<strong>冷萃浓缩液</strong>：永璞、Manner、%Arabica浓缩液，倒进牛奶/气泡水/热水都行。',
+      '这类产品用单品豆制作，风味层次明显，没有普通速溶的焦苦味。',
+      '价格约 ¥2-5/杯，比外卖便宜得多。'
+    ],
+    rec: '预算允许的话，精品冻干/浓缩液是"方便党"的终极答案，几乎不需要任何器具。'
+  },
+  pod: {
+    emoji: '⚡',
+    title: '胶囊咖啡机',
+    method: [
+      '买个<strong>Nespresso胶囊机</strong>（入门款约¥400-600），压入胶囊一键出咖啡。',
+      '奶泡机型（Pixie/Citiz带奶泡器）可以做拿铁。',
+      '胶囊一盒约¥4-8/颗，有多种口味可选。',
+      '缺点：胶囊不可回收，长期成本较高；且只能用原厂胶囊。'
+    ],
+    rec: '胶囊咖啡是"有品质又省事"的最佳方案，唯一缺点是胶囊垃圾和长期花费。'
+  },
+  drip: {
+    emoji: '🫗',
+    title: '手冲咖啡',
+    method: [
+      '需要：<strong>手冲壶</strong>（约¥50-150）+ <strong>滤杯</strong>（约¥30）+ <strong>滤纸</strong> + <strong>磨豆机</strong>（手摇¥100起，推荐泰摩栗子C2）。',
+      '方法：称15g咖啡粉（中细研磨），92°C水温，画圈注入，总注水约240g，2-3分钟完成。',
+      '可以买到<strong>新鲜烘焙的咖啡豆</strong>（问烘焙师要烘焙日期），自己现磨现冲。',
+      '手冲能喝出咖啡的风味层次（果酸、花香、巧克力等），但需要一点练习。'
+    ],
+    rec: '手冲是最能体现咖啡风味的做法，但需要耐心学习。建议买一个入门套装（泰摩/汉匠），先用中深烘豆练习。'
+  },
+  french: {
+    emoji: '🍵',
+    title: '法压壶',
+    method: [
+      '只需要一个<strong>法压壶</strong>（¥30-100），不用滤纸不用磨豆机（可以买预磨粉，也可以自己用破壁机打）。',
+      '方法：粗研磨咖啡粉15g + 热水250ml，搅拌后盖盖焖4分钟，缓慢压下滤网，倒出饮用。',
+      '法压壶咖啡油脂丰富、口感厚重，但会有少量咖啡渣。',
+      '如果想更精致，搭配一个<strong>手动磨豆机</strong>（¥100-200），用豆子现磨。'
+    ],
+    rec: '法压壶是"性价比最高"的现煮方式——一杯工具只要几十块，就能喝到远超速溶的咖啡。'
+  },
+  french_low: {
+    emoji: '🤏',
+    title: '法压壶入门',
+    method: [
+      '预算有限？一个<strong>国产法压壶</strong>（京东/淘宝¥30左右）就够。',
+      '粉可以买现成的（问咖啡店主"有没有中粗研磨的"），回家直接倒粉加压。',
+      '后续想提升再买磨豆机，不花冤枉钱。',
+      '法压壶简单粗暴，但咖啡香味远超任何速溶。'
+    ],
+    rec: '30块钱试水法压壶，觉得好喝再升级磨豆机，是最稳妥的起步方式。'
+  },
+  moka: {
+    emoji: '🔥',
+    title: '摩卡壶',
+    method: [
+      '<strong>摩卡壶</strong>（Bialetti约¥150-250）放灶上加热5分钟，出浓郁的意式浓度咖啡。',
+      '用法极简单：下壶加水→粉槽装粉→拧紧→开小火等嘶嘶声→关火。',
+      '煮出来的咖啡浓度高、油脂厚，可以直接喝，也可以加奶做拿铁。',
+      '注意：不能用细研磨粉（会过萃发苦），用中等偏粗研磨，或者买摩卡壶专用粉。'
+    ],
+    rec: '摩卡壶是"简单又好喝"的代表——不用滤纸、不用手冲技巧，灶上一站就有浓郁咖啡。非常适合日常家用。'
+  },
+  hand_grind: {
+    emoji: '🪵',
+    title: '手冲 + 手摇磨豆',
+    method: [
+      '完整配置：<strong>手摇磨豆机</strong>（泰摩栗子C2约¥250，或1Zpresso QX约¥300）+ <strong>手冲壶</strong>（约¥80）+ <strong>滤杯</strong>（V60或蛋糕杯均可）+ <strong>电子秤</strong>（¥30）。',
+      '总预算约¥400-500，但每件单品以后都能升级替换。',
+      '咖啡豆建议买<strong>新鲜烘焙</strong>的（烘焙后2-4周内最佳），问卖家要烘焙日期。',
+      '从<strong>中深烘</strong>豆开始练习（巧克力、坚果风味，容错率高），熟悉后再尝试浅烘（花果香）。'
+    ],
+    rec: '这套配置入门门槛适中，一旦上手会发现乐趣无穷。磨豆机是最值得投资的部分，好的磨豆机直接决定咖啡好不好喝。'
+  },
+  semi_auto: {
+    emoji: '🖥️',
+    title: '半自动意式咖啡机',
+    method: [
+      '入门推荐：<strong>惠家KD-310</strong>（约¥2500）、<strong>柏翠PE3600</strong>（约¥1000）、<strong>Lelit Bianca</strong>（高端约¥8000+）。',
+      '还需要一个<strong>半自动磨豆机</strong>（如惠家WD-43、DF64），磨豆机比咖啡机更重要！',
+      '可以做浓缩、美式、拿铁、卡布奇诺——但需要学习拉花等技术。',
+      '这条路一旦进去就停不下来，预算轻松过万，但乐趣和成就感也是最高的。'
+    ],
+    rec: '半自动是"认真玩咖啡"的入门，但如果只是日常喝几杯，摩卡壶或法压壶更划算。建议先确定自己能坚持再投入。'
+  },
+  clean: {
+    emoji: '🌸',
+    title: '手冲（浅/中烘单品豆）',
+    method: [
+      '推荐<strong>V60滤杯</strong>，搭配中浅烘单品豆（埃塞俄比亚耶加雪菲、肯尼亚等）。',
+      '水温90-93°C，细研磨，总时间2-3分钟。',
+      '能喝出清晰的水果酸、花香、茶感——和意式浓缩完全是两个世界。',
+      '入门装备清单：V60滤杯+滤纸、手冲壶、电子秤、磨豆机，总预算¥500-800。'
+    ],
+    rec: '喜欢干净明亮风味的，手冲是唯一正解。先从耶加雪菲开始，感受咖啡的花果香气。'
+  },
+  rich: {
+    emoji: '🍫',
+    title: '摩卡壶 / 法压壶（中深烘）',
+    method: [
+      '推荐<strong>摩卡壶</strong>配中深烘意式拼配豆（意大利品牌：Illy、Lavazza），或<strong>法压壶</strong>配巴西/哥伦比亚豆。',
+      '中深烘豆的巧克力、坚果、焦糖风味在浓煮方式下更突出。',
+      '摩卡壶5分钟出一杯浓郁咖啡，法压壶4分钟焖压，都很适合早晨。',
+      '如果想更近一步：摩卡壶+好磨豆机，成本¥300-500，效果已经很惊艳。'
+    ],
+    rec: '喜欢浓醇厚重的，摩卡壶是最划算的选择——简单、快速、味道足，而且不用学习太多技巧。'
+  },
+  versatile: {
+    emoji: '🎯',
+    title: '法压壶（万能起点）',
+    method: [
+      '法压壶既能做浓郁的黑咖（粗研磨，焖4分钟），也能加奶做简易拿铁。',
+      '咖啡豆随意选——深烘做黑咖，中烘加奶都好喝，不挑。',
+      '后续升级路径清晰：先加磨豆机（¥150），再加手冲套装（¥200），逐步进阶。',
+      '法压壶成本低、容错率高，不会一开始就买错东西浪费钱。'
+    ],
+    rec: '法压壶是最不会出错的起点——便宜、简单、能黑能奶，等习惯了再考虑升级设备。'
+  }
+};
+
+function showResult(key) {
+  var r = results[key];
+  if (!r) return;
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('result-step').classList.add('active');
+  var html = '<div class="result-box"><div class="emoji">' + r.emoji + '</div>';
+  html += '<h3>' + r.title + '</h3>';
+  html += '<ul class="method">';
+  r.method.forEach(function(m) { html += '<li>' + m + '</li>'; });
+  html += '</ul>';
+  html += '<div class="rec"><div class="rec-title">💡 为什么推荐这个</div><div class="rec-content">' + r.rec + '</div></div>';
+  html += '<button class="restart" onclick="restart()">重新选择</button></div>';
+  document.getElementById('result-content').innerHTML = html;
+}
+function restart() { path = []; goStep(1); }
+</script>
+</body>
+</html>
