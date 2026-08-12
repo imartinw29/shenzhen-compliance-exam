@@ -83,15 +83,15 @@ h2 { font-size: 20px; margin-bottom: 6px; color: #e2b04a; }
   <h2>第2步（方便派）</h2>
   <p class="subtitle">你已经选了方便，那想喝到什么程度？</p>
   <div class="options">
-    <div class="opt-btn" onclick="goStep(3a, 'a')">
+    <div class="opt-btn" onclick="goStep('3a', 'a')">
       <div class="label">凑合喝就行</div>
       <div class="desc">有个咖啡味就够，便宜最重要</div>
     </div>
-    <div class="opt-btn" onclick="goStep(3b, 'b')">
+    <div class="opt-btn" onclick="goStep('3b', 'b')">
       <div class="label">好点的速溶</div>
       <div class="desc">想比三合一好喝，但不想买器具</div>
     </div>
-    <div class="opt-btn" onclick="goStep(3c, 'c')">
+    <div class="opt-btn" onclick="goStep('3c', 'c')">
       <div class="label">稍微麻烦点也行</div>
       <div class="desc">可以接受几分钟，换更大提升</div>
     </div>
@@ -104,15 +104,15 @@ h2 { font-size: 20px; margin-bottom: 6px; color: #e2b04a; }
   <h2>第2步（品质派）</h2>
   <p class="subtitle">你愿意投入多少精力？</p>
   <div class="options">
-    <div class="opt-btn" onclick="goStep(3d, 'a')">
+    <div class="opt-btn" onclick="goStep('3d', 'a')">
       <div class="label">想买器具，但懒得动手</div>
       <div class="desc">机器自动搞定，人坐着等</div>
     </div>
-    <div class="opt-btn" onclick="goStep(3d, 'b')">
+    <div class="opt-btn" onclick="goStep('3d', 'b')">
       <div class="label">愿意学，享受过程</div>
       <div class="desc">手冲、法压都可以，享受仪式感</div>
     </div>
-    <div class="opt-btn" onclick="goStep(3e, 'a')">
+    <div class="opt-btn" onclick="goStep('3e', 'a')">
       <div class="label">从豆子开始折腾</div>
       <div class="desc">买生豆自己烘，或者买咖啡豆自己磨</div>
     </div>
@@ -230,9 +230,10 @@ h2 { font-size: 20px; margin-bottom: 6px; color: #e2b04a; }
 <script>
 var path = [];
 function goStep(n, choice) {
+  n = String(n);
   // Handle step-1 routing to step-2a or step-2b
-  if (n === 2 && choice === 'A') n = '2a';
-  if (n === 2 && choice === 'B') n = '2b';
+  if (n === '2' && choice === 'A') n = '2a';
+  if (n === '2' && choice === 'B') n = '2b';
   
   path.push(choice);
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
