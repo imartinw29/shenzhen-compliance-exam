@@ -126,6 +126,12 @@
   .result-detail .ans-label { font-weight: 600; }
   .result-detail .ans-correct { color: #38a169; }
   .result-detail .ans-user { color: #e53e3e; }
+  .feedback-correct { background: #f0fff4; border-color: #38a169; }
+  .feedback-wrong { background: #fff5f5; border-color: #e53e3e; }
+  .feedback-hint { font-size: 13px; margin-top: 10px; padding: 8px 12px; border-radius: 6px; display: none; }
+  .feedback-hint.show { display: block; }
+  .feedback-hint.correct { background: #f0fff4; color: #276749; }
+  .feedback-hint.wrong { background: #fff5f5; color: #c53030; }
   .hidden { display: none !important; }
   .empty-state { text-align: center; padding: 40px 20px; color: #a0aec0; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
@@ -179,13 +185,13 @@
           <div class="icon">&#128221;</div><div class="label">模拟考试</div>
           <div class="desc">42道题，真实考试体验</div>
         </div>
-        <div class="mode-btn" id="btn-order">
-          <div class="icon">&#128218;</div><div class="label">顺序练习</div>
-          <div class="desc">按题库顺序逐题练习</div>
+        <div class="mode-btn" id="btn-practice">
+          <div class="icon">&#128161;</div><div class="label">练习模式</div>
+          <div class="desc">答完立即显示对错，学习巩固</div>
         </div>
-        <div class="mode-btn" id="btn-random">
-          <div class="icon">&#127922;</div><div class="label">随机练习</div>
-          <div class="desc">打乱顺序随机抽题</div>
+        <div class="mode-btn" id="btn-answer">
+          <div class="icon">&#128220;</div><div class="label">答题模式</div>
+          <div class="desc">答完不显示，交卷后出结果</div>
         </div>
         <div class="mode-btn" id="btn-wrong">
           <div class="icon">&#10060;</div><div class="label">错题重练</div>
@@ -385,12 +391,18 @@ function startExam() {
   document.getElementById('exam-title').textContent = '模拟考试';
   showPage('page-exam'); renderQuestion(); renderAnswerSheet();
 }
-function startPractice(mode) {
-  currentMode = mode; examStartTime = Date.now();
-  var qs = ALL_QUESTIONS.slice();
-  if (mode === 'random') qs = shuffleArray(qs);
-  currentQuestions = qs; currentIndex = 0; userAnswers = {};
-  document.getElementById('exam-title').textContent = mode === 'order' ? '顺序练习' : '随机练习';
+function startPractice() {
+  currentMode = 'practice'; examStartTime = Date.now();
+  currentQuestions = ALL_QUESTIONS.slice();
+  currentIndex = 0; userAnswers = {};
+  document.getElementById('exam-title').textContent = '练习模式';
+  showPage('page-exam'); renderQuestion(); renderAnswerSheet();
+}
+function startAnswer() {
+  currentMode = 'answer'; examStartTime = Date.now();
+  currentQuestions = ALL_QUESTIONS.slice();
+  currentIndex = 0; userAnswers = {};
+  document.getElementById('exam-title').textContent = '答题模式';
   showPage('page-exam'); renderQuestion(); renderAnswerSheet();
 }
 function startWrongPractice() {
@@ -492,6 +504,37 @@ function selectAnswer(label) {
     userAnswers[q.id] = label;
   }
   renderQuestion(); updateAnswerSheet();
+  // 练习模式：答完后立即显示反馈
+  if (currentMode === 'practice') showFeedback(q);
+}
+
+function showFeedback(q) {
+  var userAns = (userAnswers[q.id] || '').toUpperCase();
+  var correctAns = q.answer.toUpperCase();
+  var isCorrect = userAns === correctAns;
+  // 高亮选项
+  var opts = document.querySelectorAll('#opt-list .option');
+  for (var i = 0; i < opts.length; i++) {
+    var lbl = opts[i].getAttribute('data-opt');
+    opts[i].classList.remove('feedback-correct', 'feedback-wrong');
+    if (lbl === correctAns) opts[i].classList.add('feedback-correct');
+    if (lbl === userAns && !isCorrect) opts[i].classList.add('feedback-wrong');
+  }
+  // 显示反馈提示
+  var hint = document.getElementById('feedback-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'feedback-hint';
+    hint.className = 'feedback-hint';
+    document.querySelector('.question-card').appendChild(hint);
+  }
+  if (isCorrect) {
+    hint.className = 'feedback-hint show correct';
+    hint.innerHTML = '<strong>✓ 正确！</strong> 正确答案：' + correctAns + '（' + q.score + '分）';
+  } else {
+    hint.className = 'feedback-hint show wrong';
+    hint.innerHTML = '<strong>✗ 错误</strong> 你的答案：' + (userAns || '未作答') + '，正确答案：' + correctAns;
+  }
 }
 
 function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
@@ -654,8 +697,8 @@ function updateWrongBookSummary() {
 // ===== 事件绑定：不用HTML内联onclick，全部用addEventListener =====
 function bindEvents() {
   document.getElementById('btn-exam').addEventListener('click', startExam);
-  document.getElementById('btn-order').addEventListener('click', function() { startPractice('order'); });
-  document.getElementById('btn-random').addEventListener('click', function() { startPractice('random'); });
+  document.getElementById('btn-practice').addEventListener('click', startPractice);
+  document.getElementById('btn-answer').addEventListener('click', startAnswer);
   document.getElementById('btn-wrong').addEventListener('click', startWrongPractice);
   document.getElementById('btn-show-wrong').addEventListener('click', showWrongBook);
   document.getElementById('btn-clear-wrong').addEventListener('click', clearWrongBook);
